@@ -24,9 +24,10 @@ module GitStats
       end
 
       def binary?
-        repo.run("git cat-file blob #{sha} | grep -m 1 '^'").dup
-            .force_encoding('ISO-8859-1').encode('utf-8', replace: nil)
-            .match?(/binary file/i)
+        s = repo.run("git cat-file blob #{sha} | grep -m 1 '^' 2>&1").dup
+        is_binary = s.force_encoding('ISO-8859-1').encode('utf-8', replace: nil).match?(/binary file/i)
+        puts "SHA #{sha} (#{filename}): binary=#{is_binary}, s=#{s}"
+        is_binary
       end
 
       def ==(other)
